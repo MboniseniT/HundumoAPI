@@ -4,14 +4,16 @@ using BinmakAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BinmakBackEnd.Migrations
 {
     [DbContext(typeof(BinmakDbContext))]
-    partial class BinmakDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200924075042_mathopsedited1")]
+    partial class mathopsedited1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

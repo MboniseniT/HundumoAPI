@@ -17,10 +17,6 @@ namespace BinmakAPI.Data
 
         public DbSet<AssetNode> AssetNodes { get; set; }
         public DbSet<AssetNodeType> AssetNodeTypes { get; set; }
-        //public DbSet<Organization> Organizations { get; set; }
-        //public DbSet<ProductiveUnit> ProductiveUnits { get; set; }
-        //public DbSet<Template> Templates { get; set; }
-        //public DbSet<Equipment> Equipments { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<AssetUser> AssetUsers { get; set; }
@@ -29,6 +25,8 @@ namespace BinmakAPI.Data
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<BinmakModule> BinmakModules { get; set; }
         public DbSet<BinmakModuleAccess> BinmakModuleAccesses { get; set; }
+        public DbSet<FormulaCreation> FormulaCreations { get; set; }
+        public DbSet<MathematicalOperator> MathematicalOperators { get; set; }
 
         //Production Flow
         public DbSet<BinmakBackEnd.Areas.ProductionFlow.Entities.ProductionFlowAsset> ProductionFlowAssets { get; set; }

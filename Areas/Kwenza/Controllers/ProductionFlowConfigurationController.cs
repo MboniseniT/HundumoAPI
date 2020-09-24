@@ -819,6 +819,68 @@ namespace BinmakBackEnd.Areas.Kwenza.Controllers
 
         }
 
+
+        [HttpGet("mathsOperator")]
+        public IActionResult GetOperators()
+        {
+            List<MathematicalOperator> mathematicalOperators = _context.MathematicalOperators.ToList();
+
+            return Ok(mathematicalOperators);
+        }
+
+
+        [HttpPost("formularCreation")]
+        public IActionResult CreateKPAFormula([FromBody] FormulaCreationVM formulaCreation)
+        {
+            if (formulaCreation == null)
+            {
+                return BadRequest("Something bad happened.");
+            }
+
+            try
+            {
+                //Check formular existance and delete before adding
+                List<FormulaCreation> formulaCreations1 = _context.FormulaCreations.Where(id => id.FormularOwnerKPAId == formulaCreation.keyProcessAreaId).ToList();
+
+                if (formulaCreations1.Count != 0)
+                {
+                    _context.FormulaCreations.RemoveRange(formulaCreations1);
+                    _context.SaveChanges();
+                }
+
+                List<FormulaCreation> formulaCreations = new List<FormulaCreation>();
+
+                for (int i = 0; i < formulaCreation.KPAIds.Count; i++)
+                {
+                    FormulaCreation formula = new FormulaCreation();
+                    formula.KeyProcessAreaId = formulaCreation.KPAIds[i];
+                    formula.FormularOwnerKPAId = formulaCreation.keyProcessAreaId;
+                }
+
+                for (int i = 0; i < formulaCreation.OpsIds.Count; i++)
+                {
+                    FormulaCreation formula = new FormulaCreation();
+                    formula.MathematicalOperatorId = formulaCreation.OpsIds[i];
+                    formula.FormularOwnerKPAId = formulaCreation.keyProcessAreaId;
+                    formulaCreations.Add(formula);
+                }
+
+                //var t = formulaCreations;
+
+                //_context.FormulaCreations.AddRange(formulaCreations);
+                //_context.SaveChanges();
+                
+
+                return Ok();
+            }
+            catch (Exception Ex)
+            {
+                return BadRequest("Something bad happened. Make sure formula is crafted correclty"+ Ex.Message);
+            }
+
+        }
+
+
         [HttpGet("GetClientAssetKPAs")]
         public IActionResult GetKPATarget(int keyProcessAreaId)
         {
@@ -836,14 +898,27 @@ namespace BinmakBackEnd.Areas.Kwenza.Controllers
 
                 List<AssetNode> assetNodesWithParents = _context.AssetNodes.Where(id => id.ParentAssetNodeId == parentAssetNodeId).ToList();
 
-                List<KeyProcessArea> keyProcessAreas = new List<KeyProcessArea>();
+                List<KeyProcessArea> keyProcessAreas1 = new List<KeyProcessArea>();
 
                 foreach (var item in assetNodesWithParents)
                 {
+                    List<KeyProcessArea> keyProcessAreas = _context.KeyProcessAreas.Where(id => id.AssetNodeId == item.AssetNodeId).ToList();
 
+                    foreach (var kpa in keyProcessAreas)
+                    {
+                        keyProcessAreas1.Add(kpa);
+                    }
                 }
 
-                return Ok();
+                var allKPAs = keyProcessAreas1.Select(result => new
+                {
+                    AssetNodeId = result.AssetNodeId,
+                    KPAName = "[" + _context.AssetNodes.FirstOrDefault(id => id.AssetNodeId == result.AssetNodeId).Code + "] " + _context.KeyProcessAreas.FirstOrDefault(id => id.KeyProcessAreaId == result.KeyProcessAreaId).KeyProcessAreaName 
+                    +" | "+ _context.KeyProcessAreaTypes.FirstOrDefault(id => id.KeyProcessAreaTypeId == result.KeyProcessAreaTypeId).KeyProcessAreaTypeName,
+                    KPAId = result.KeyProcessAreaId,
+                });
+
+                return Ok(allKPAs);
             }
             catch (Exception Ex)
             {
